@@ -13,7 +13,8 @@
   "keywords": [
     "placeholder",
     "input",
-    "react"
+    "react",
+    "react-component"
   ],
   "author": "enigma.io",
   "license": "MIT",
