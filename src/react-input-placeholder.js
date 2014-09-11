@@ -76,8 +76,8 @@ module.exports = function(React) {
       }
     },
 
-    componentDidUpdate: function(prevProps, prevState, node) {
-      this.setSelectionIfNeeded(node);
+    componentDidUpdate: function() {
+      this.setSelectionIfNeeded(this.getDOMNode());
     },
 
     render: function() {
