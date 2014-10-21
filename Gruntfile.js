@@ -4,7 +4,7 @@ module.exports = function (grunt) {
     browserify: {
       dist: {
         files: {
-          'dist/react-input-placeholder.js': ['src/umd.js']
+          'dist/react-input-placeholder.js': ['src/react-input-placeholder.js']
         },
       }
     },

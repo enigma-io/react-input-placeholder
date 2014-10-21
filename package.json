@@ -16,7 +16,7 @@
     "react",
     "react-component"
   ],
-  "author": "enigma.io",
+  "contributors": ["enigma.io","Joe Natalzia"],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/enigma-io/react-input-placeholder/issues"
