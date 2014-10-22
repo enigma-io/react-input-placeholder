@@ -4,7 +4,7 @@ var isPlaceholderSupported = 'placeholder' in document.createElement('input');
  * Input is a wrapper around React.DOM.input with a `placeholder` shim for IE9.
  * NOTE: only supports "controlled" inputs (http://facebook.github.io/react/docs/forms.html#controlled-components)
  */
-var createShimmedElement = function(React, el, name) {
+var createShimmedElement = function(React, elementConstructor, name) {
   return React.createClass({
     displayName: name,
 
@@ -81,7 +81,7 @@ var createShimmedElement = function(React, el, name) {
     },
 
     render: function() {
-      var element = this.transferPropsTo(el());
+      var element = this.transferPropsTo(elementConstructor());
       if (this.needsPlaceholding) {
         // override valueLink and event handlers
         element.props.onFocus = this.onFocus;
