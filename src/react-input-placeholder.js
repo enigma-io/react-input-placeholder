@@ -4,9 +4,9 @@ var isPlaceholderSupported = 'placeholder' in document.createElement('input');
  * Input is a wrapper around React.DOM.input with a `placeholder` shim for IE9.
  * NOTE: only supports "controlled" inputs (http://facebook.github.io/react/docs/forms.html#controlled-components)
  */
-module.exports = function(React) {
+var createShimmedElement = function(React, elementConstructor, name) {
   return React.createClass({
-    displayName: 'Input',
+    displayName: name,
 
     componentWillMount: function() {
       this.needsPlaceholding = this.props.placeholder && !isPlaceholderSupported;
@@ -81,27 +81,34 @@ module.exports = function(React) {
     },
 
     render: function() {
-      var input = this.transferPropsTo(React.DOM.input());
+      var element = this.transferPropsTo(elementConstructor());
       if (this.needsPlaceholding) {
         // override valueLink and event handlers
-        input.props.onFocus = this.onFocus;
-        input.props.onBlur = this.onBlur;
-        input.props.onChange = this.onChange;
-        input.props.onSelect = this.onSelect;
-        input.props.valueLink = undefined;
+        element.props.onFocus = this.onFocus;
+        element.props.onBlur = this.onBlur;
+        element.props.onChange = this.onChange;
+        element.props.onSelect = this.onSelect;
+        element.props.valueLink = undefined;
 
         var value = this.getValue();
         if (!value) {
           this.isPlaceholding = true;
           value = this.props.placeholder;
-          input.props.type = 'text';
-          input.props.className += ' placeholder';
+          element.props.type = 'text';
+          element.props.className += ' placeholder';
         } else {
           this.isPlaceholding = false;
         }
-        input.props.value = value;
+        element.props.value = value;
       }
-      return input;
+      return element;
     }
   });
+}
+
+module.exports = function(React) {
+  return {
+    Input: createShimmedElement(React, React.DOM.input, "Input"),
+    Textarea: createShimmedElement(React, React.DOM.textarea, "Textarea")
+  }
 };

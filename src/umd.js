@@ -5,6 +5,5 @@ if (typeof define === 'function' && define.amd) {
     return reactInputPlaceholder(React);
   });
 } else {
-  window.React.addons = window.React.addons || {};
-  window.React.addons.Input = reactInputPlaceholder(window.React);
+  window.PlaceholderShim = reactInputPlaceholder(window.React);
 }
