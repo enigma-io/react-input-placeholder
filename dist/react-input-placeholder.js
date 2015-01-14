@@ -1,8 +1,9 @@
-;(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var isPlaceholderSupported = 'placeholder' in document.createElement('input');
+var isIe8 = document.all && !document.addEventListener;
 
 /**
- * Input is a wrapper around React.DOM.input with a `placeholder` shim for IE9.
+ * Input is a wrapper around React.DOM.input with a `placeholder` shim for IE9 and IE8.
  * NOTE: only supports "controlled" inputs (http://facebook.github.io/react/docs/forms.html#controlled-components)
  */
 var createShimmedElement = function(React, elementConstructor, name) {
@@ -37,15 +38,29 @@ var createShimmedElement = function(React, elementConstructor, name) {
     // keep track of focus
     onFocus: function(e) {
       this.hasFocus = true;
-      this.setSelectionIfNeeded(e.target);
+      if (!isIe8) {
+        this.setSelectionIfNeeded(e.target);
+      }
+      // IE8 only: if the placeholder is visible, remove it on focus
+      else if(this.isPlaceholding && e.target.value.indexOf(this.props.placeholder) !== -1) {
+        e.target.value = '';
+      }
       if (this.props.onFocus) { return this.props.onFocus(e); }
     },
     onBlur: function(e) {
       this.hasFocus = false;
+      // IE8 only: if the input field is empty, add the placeholder on blur
+      if (isIe8 && e.target.value === '') {
+        e.target.value = this.props.placeholder;
+      }
       if (this.props.onBlur) { return this.props.onBlur(e); }
     },
 
     setSelectionIfNeeded: function(node) {
+      // IE8 only: don't try to call setSelectionRange method
+      if (isIe8) {
+        return true;
+      }
       // if placeholder is visible, ensure cursor is at start of input
       if (this.needsPlaceholding && this.hasFocus && this.isPlaceholding &&
           (node.selectionStart !== 0 || node.selectionEnd !== 0)) {
@@ -105,13 +120,13 @@ var createShimmedElement = function(React, elementConstructor, name) {
       return element;
     }
   });
-}
+};
 
 module.exports = function(React) {
   return {
-    Input: createShimmedElement(React, React.DOM.input, "Input"),
-    Textarea: createShimmedElement(React, React.DOM.textarea, "Textarea")
-  }
+    Input: createShimmedElement(React, React.DOM.input, 'Input'),
+    Textarea: createShimmedElement(React, React.DOM.textarea, 'Textarea')
+  };
 };
 
 },{}],2:[function(require,module,exports){
@@ -125,4 +140,3 @@ if (typeof define === 'function' && define.amd) {
   window.PlaceholderShim = reactInputPlaceholder(window.React);
 }
 },{"./react-input-placeholder":1}]},{},[2])
-;
