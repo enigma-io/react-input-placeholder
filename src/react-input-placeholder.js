@@ -94,7 +94,7 @@ var createShimmedElement = function(React, elementConstructor, name) {
         if (!value) {
           this.isPlaceholding = true;
           value = this.props.placeholder;
-          element.props.type = 'text';
+          element.props.type = this.props.type || 'text';
           element.props.className += ' placeholder';
         } else {
           this.isPlaceholding = false;
