@@ -1,4 +1,4 @@
-var isPlaceholderSupported = 'placeholder' in document.createElement('input');
+var isPlaceholderSupported = (typeof document !== 'undefined') && 'placeholder' in document.createElement('input');
 
 /**
  * Input is a wrapper around React.DOM.input with a `placeholder` shim for IE9.
