@@ -1,4 +1,4 @@
-var isPlaceholderSupported = 'placeholder' in document.createElement('input');
+var isPlaceholderSupported = (typeof document !== 'undefined') && 'placeholder' in document.createElement('input');
 
 /**
  * Input is a wrapper around React.DOM.input with a `placeholder` shim for IE9.
@@ -104,11 +104,11 @@ var createShimmedElement = function(React, elementConstructor, name) {
       return element;
     }
   });
-}
+};
 
 module.exports = function(React) {
   return {
-    Input: createShimmedElement(React, React.DOM.input, "Input"),
-    Textarea: createShimmedElement(React, React.DOM.textarea, "Textarea")
-  }
+    Input: createShimmedElement(React, React.DOM.input, 'Input'),
+    Textarea: createShimmedElement(React, React.DOM.textarea, 'Textarea')
+  };
 };
