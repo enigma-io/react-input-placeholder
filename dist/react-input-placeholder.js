@@ -82,7 +82,8 @@ var createShimmedElement = function(React, elementConstructor, name) {
     },
 
     render: function() {
-      var element = this.transferPropsTo(elementConstructor());
+      var element = React.createElement(elementConstructor, this.props, this.props.children);
+
       if (this.needsPlaceholding) {
         // override valueLink and event handlers
         element.props.onFocus = this.onFocus;
@@ -109,8 +110,8 @@ var createShimmedElement = function(React, elementConstructor, name) {
 
 module.exports = function(React) {
   return {
-    Input: createShimmedElement(React, React.DOM.input, 'Input'),
-    Textarea: createShimmedElement(React, React.DOM.textarea, 'Textarea')
+    Input: createShimmedElement(React, 'input', 'Input'),
+    Textarea: createShimmedElement(React, 'textarea', 'Textarea')
   };
 };
 
