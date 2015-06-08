@@ -1,18 +1,35 @@
+var assign = require('lodash.assign');
+
 var isPlaceholderSupported = 'placeholder' in document.createElement('input');
 
 /**
  * Input is a wrapper around React.DOM.input with a `placeholder` shim for IE9.
  * NOTE: only supports "controlled" inputs (http://facebook.github.io/react/docs/forms.html#controlled-components)
  */
-var createShimmedElement = function(React, elementConstructor, name) {
+function createShimmedElement(React, elementConstructor, name) {
   return React.createClass({
     displayName: name,
 
+    propTypes: {
+      placeholderStyle: React.PropTypes.object
+    },
+
     componentWillMount: function() {
-      this.needsPlaceholding = this.props.placeholder && !isPlaceholderSupported;
+      this.needsPlaceholding = this._needsPlaceholding(this.props.placeholder);
     },
     componentWillReceiveProps: function(props) {
-      this.needsPlaceholding = props.placeholder && !isPlaceholderSupported;
+      this.needsPlaceholding = this._needsPlaceholding(props.placeholder);
+    },
+
+    _needsPlaceholding: function(placeholder) {
+      if (!placeholder) { return false; }
+
+      // need to manually apply placeholders with newlines in textarea
+      if (name === 'Textarea' && placeholder.indexOf('\n') !== -1) {
+        return true;
+      }
+
+      return !isPlaceholderSupported;
     },
 
     // this component supports valueLink or value/onChange.
@@ -81,27 +98,42 @@ var createShimmedElement = function(React, elementConstructor, name) {
     },
 
     render: function() {
-      var element = React.createElement(elementConstructor, this.props, this.props.children);
+      var props = assign({}, this.props);
 
       if (this.needsPlaceholding) {
         // override valueLink and event handlers
-        element.props.onFocus = this.onFocus;
-        element.props.onBlur = this.onBlur;
-        element.props.onChange = this.onChange;
-        element.props.onSelect = this.onSelect;
-        element.props.valueLink = undefined;
+        props.onFocus = this.onFocus;
+        props.onBlur = this.onBlur;
+        props.onChange = this.onChange;
+        props.onSelect = this.onSelect;
+        props.valueLink = undefined;
 
         var value = this.getValue();
         if (!value) {
           this.isPlaceholding = true;
           value = this.props.placeholder;
-          element.props.type = 'text';
-          element.props.className += ' placeholder';
+          if (name === 'Input') {
+            props.type = 'text';
+          }
+          props.className += ' placeholder';
+
+          if (this.props.placeholderStyle) {
+            if (props.styles) {
+              // account for react-styles clobbering style prop
+              var styles = props.styles.slice();
+              styles.push(this.props.placeholderStyle);
+              props.styles = styles;
+            } else {
+              props.style = assign({}, this.props.style, this.props.placeholderStyle);
+            }
+          }
         } else {
           this.isPlaceholding = false;
         }
-        element.props.value = value;
+        props.value = value;
       }
+
+      var element = React.createElement(elementConstructor, props, this.props.children);
       return element;
     }
   });
@@ -111,5 +143,5 @@ module.exports = function(React) {
   return {
     Input: createShimmedElement(React, 'input', 'Input'),
     Textarea: createShimmedElement(React, 'textarea', 'Textarea')
-  }
+  };
 };
