@@ -20,7 +20,6 @@ module.exports = function (grunt) {
     },
     jshint: {
       options: {
-        indent: 2,
         camelcase: true,
         nonew: true,
         plusplus: true,
