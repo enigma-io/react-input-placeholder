@@ -103,38 +103,41 @@ var createShimmedElement = function(React, elementConstructor, name) {
         },
 
         render: function() {
-            var element;
             var value;
 
-            if (!('createElement' in React)) { /* start -- to be removed in 2.0.0 */
-                element = this.transferPropsTo(elementConstructor());
-            } else { /* -- end */
-                element = React.createElement(elementConstructor, this.props, this.props.children);
+            var props = {};
+
+            for(var key in this.props) {
+                // jshint -W089
+                props[key] = this.props[key];
             }
 
             if (this.needsPlaceholding) {
                 // override valueLink and event handlers
-                element.props.onFocus = this.onFocus;
-                element.props.onBlur = this.onBlur;
-                element.props.onChange = this.onChange;
-                element.props.onSelect = this.onSelect;
-                element.props.valueLink = undefined;
+                props.onFocus = this.onFocus;
+                props.onBlur = this.onBlur;
+                props.onChange = this.onChange;
+                props.onSelect = this.onSelect;
+                props.valueLink = undefined;
 
                 value = this.getValue();
 
                 if (!value) {
                     this.isPlaceholding = true;
                     value = this.props.placeholder;
-                    element.props.type = 'text';
-                    element.props.className += ' placeholder';
+                    props.className += ' placeholder';
                 } else {
                     this.isPlaceholding = false;
                 }
 
-                element.props.value = value;
+                props.value = value;
             }
 
-            return element;
+            if (!('createElement' in React)) { /* start -- to be removed in 2.0.0 */
+                return this.transferPropsTo(elementConstructor());
+            } else { /* -- end */
+                return React.createElement(elementConstructor, props, this.props.children);
+            }
         }
     });
 };
