@@ -1,4 +1,5 @@
-var isPlaceholderSupported = (typeof document !== 'undefined') && 'placeholder' in document.createElement('input');
+var isPlaceholderSupported =    (typeof document !== 'undefined')
+                             && 'placeholder' in document.createElement('input');
 
 /**
  * Input is a wrapper around React.DOM.input with a `placeholder` shim for IE9.
@@ -11,6 +12,7 @@ var createShimmedElement = function(React, elementConstructor, name) {
         componentWillMount: function() {
             this.needsPlaceholding = this.props.placeholder && !isPlaceholderSupported;
         },
+
         componentWillReceiveProps: function(props) {
             this.needsPlaceholding = props.placeholder && !isPlaceholderSupported;
         },
@@ -55,17 +57,13 @@ var createShimmedElement = function(React, elementConstructor, name) {
         },
 
         setSelectionIfNeeded: function(node) {
-            // if placeholder is visible, ensure cursor is at start of input
-            if (this.needsPlaceholding &&
-                    this.hasFocus &&
-                    this.isPlaceholding &&
-                    (node.selectionStart !== 0 || node.selectionEnd !== 0)) {
+            if (   this.needsPlaceholding
+                && 'setSelectionRange' in node
+                && this.hasFocus
+                && this.isPlaceholding
+                && (node.selectionStart !== 0 || node.selectionEnd !== 0)) {
                 node.setSelectionRange(0, 0);
-
-                return true;
-            }
-
-            return false;
+            } // if placeholder is visible, ensure cursor is at start of input
         },
 
         onChange: function(e) {
@@ -107,8 +105,10 @@ var createShimmedElement = function(React, elementConstructor, name) {
             var value;
             var key;
 
-            for(key in this.props) {
-                props[key] = this.props[key];
+            for (key in this.props) {
+                if (this.props.hasOwnProperty(key)) {
+                    props[key] = this.props[key];
+                }
             }
 
             if (this.needsPlaceholding) {

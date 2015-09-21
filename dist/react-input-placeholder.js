@@ -1,5 +1,6 @@
-;(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var isPlaceholderSupported = (typeof document !== 'undefined') && 'placeholder' in document.createElement('input');
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+var isPlaceholderSupported =    (typeof document !== 'undefined')
+                             && 'placeholder' in document.createElement('input');
 
 /**
  * Input is a wrapper around React.DOM.input with a `placeholder` shim for IE9.
@@ -12,6 +13,7 @@ var createShimmedElement = function(React, elementConstructor, name) {
         componentWillMount: function() {
             this.needsPlaceholding = this.props.placeholder && !isPlaceholderSupported;
         },
+
         componentWillReceiveProps: function(props) {
             this.needsPlaceholding = props.placeholder && !isPlaceholderSupported;
         },
@@ -56,17 +58,13 @@ var createShimmedElement = function(React, elementConstructor, name) {
         },
 
         setSelectionIfNeeded: function(node) {
-            // if placeholder is visible, ensure cursor is at start of input
-            if (this.needsPlaceholding &&
-                    this.hasFocus &&
-                    this.isPlaceholding &&
-                    (node.selectionStart !== 0 || node.selectionEnd !== 0)) {
+            if (   this.needsPlaceholding
+                && 'setSelectionRange' in node
+                && this.hasFocus
+                && this.isPlaceholding
+                && (node.selectionStart !== 0 || node.selectionEnd !== 0)) {
                 node.setSelectionRange(0, 0);
-
-                return true;
-            }
-
-            return false;
+            } // if placeholder is visible, ensure cursor is at start of input
         },
 
         onChange: function(e) {
@@ -104,38 +102,42 @@ var createShimmedElement = function(React, elementConstructor, name) {
         },
 
         render: function() {
-            var element;
+            var props = {};
             var value;
+            var key;
 
-            if (!('createElement' in React)) { /* start -- to be removed in 2.0.0 */
-                element = this.transferPropsTo(elementConstructor());
-            } else { /* -- end */
-                element = React.createElement(elementConstructor, this.props, this.props.children);
+            for (key in this.props) {
+                if (this.props.hasOwnProperty(key)) {
+                    props[key] = this.props[key];
+                }
             }
 
             if (this.needsPlaceholding) {
                 // override valueLink and event handlers
-                element.props.onFocus = this.onFocus;
-                element.props.onBlur = this.onBlur;
-                element.props.onChange = this.onChange;
-                element.props.onSelect = this.onSelect;
-                element.props.valueLink = undefined;
+                props.onFocus = this.onFocus;
+                props.onBlur = this.onBlur;
+                props.onChange = this.onChange;
+                props.onSelect = this.onSelect;
+                props.valueLink = undefined;
 
                 value = this.getValue();
 
                 if (!value) {
                     this.isPlaceholding = true;
                     value = this.props.placeholder;
-                    element.props.type = 'text';
-                    element.props.className += ' placeholder';
+                    props.className += ' placeholder';
                 } else {
                     this.isPlaceholding = false;
                 }
 
-                element.props.value = value;
+                props.value = value;
             }
 
-            return element;
+            if (!('createElement' in React)) { /* start -- to be removed in 2.0.0 */
+                return this.transferPropsTo(elementConstructor());
+            } else { /* -- end */
+                return React.createElement(elementConstructor, props, this.props.children);
+            }
         }
     });
 };
@@ -148,8 +150,8 @@ module.exports = function(React) {
         };
     } else { /* -- end */
         return {
-            Input: React.createFactory(createShimmedElement(React, 'input', 'Input')),
-            Textarea: React.createFactory(createShimmedElement(React, 'textarea', 'Textarea'))
+            Input: createShimmedElement(React, 'input', 'Input'),
+            Textarea: createShimmedElement(React, 'textarea', 'Textarea')
         };
     }
 };
@@ -165,4 +167,3 @@ if (typeof define === 'function' && define.amd) {
   window.PlaceholderShim = reactInputPlaceholder(window.React);
 }
 },{"./react-input-placeholder":1}]},{},[2])
-;
