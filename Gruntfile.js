@@ -37,7 +37,8 @@ module.exports = function (grunt) {
         regexp: true,
         trailing: true,
         node: true,
-        browser: true
+        browser: true,
+        laxbreak: true
       },
       gruntfile: {
         files: {

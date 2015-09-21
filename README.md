@@ -3,7 +3,7 @@ React Input and Textarea with Placeholder Shim
 
 `PlaceholderShim` provides `Input` and `Textarea`, small wrappers around `React.createElement('input')` and `React.createElement('textarea')` respectively that shims in `placeholder` functionality for browsers that don't natively support it. Currently only tested with IE9.
 
-Demo: https://jsfiddle.net/yaycmyk/69z2wepo/10029/
+Demo: https://jsfiddle.net/69z2wepo/16498/
 
 ## Getting Started
 ### Browserify
