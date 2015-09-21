@@ -149,8 +149,8 @@ module.exports = function(React) {
         };
     } else { /* -- end */
         return {
-            Input: React.createFactory(createShimmedElement(React, 'input', 'Input')),
-            Textarea: React.createFactory(createShimmedElement(React, 'textarea', 'Textarea'))
+            Input: createShimmedElement(React, 'input', 'Input'),
+            Textarea: createShimmedElement(React, 'textarea', 'Textarea')
         };
     }
 };
