@@ -126,6 +126,12 @@ var createShimmedElement = function(React, elementConstructor, name) {
                     this.isPlaceholding = true;
                     value = this.props.placeholder;
                     props.className += ' placeholder';
+                    // Password inputs will show dots in place of characters -
+                    // to present the placeholder text we fall back to a
+                    // standard text input.
+                    if (props.type === 'password') {
+                      props.type = 'text';
+                    }
                 } else {
                     this.isPlaceholding = false;
                 }

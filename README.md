@@ -59,6 +59,12 @@ Works on IE9!
 <Input placeholder="Enter text here..." value={this.state.value} onChange={this.handleChange} />
 ```
 
+### `[type="password"]` inputs
+
+When presenting placeholder text for a password input the type attribute will be _temporarily_ changed to `[type="text"]` while the field is empty - this enables the placeholder text to appear as regular characters and not a string of dots.
+
+If you intend to use `[type="text"]` and `[type="password"]` selectors you may want to consider this.
+
 ## Building yourself
 
 ```shell
