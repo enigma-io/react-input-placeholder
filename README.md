@@ -43,12 +43,6 @@ textarea.placeholder {
 }
 ```
 
-## A note regarding `[type="password"]` inputs
-
-When presenting placeholder text for a password input the type attribute will be
-_temporarily_ changed to `[type="text"]` while the field is empty - this enables
-the placeholder text to appear as regular characters and not a string of dots.
-
 ### Before
 
 Placeholder doesn't show on IE9.
@@ -64,6 +58,12 @@ Works on IE9!
 ```html
 <Input placeholder="Enter text here..." value={this.state.value} onChange={this.handleChange} />
 ```
+
+### A note regarding `[type="password"]` inputs
+
+When presenting placeholder text for a password input the type attribute will be
+_temporarily_ changed to `[type="text"]` while the field is empty - this enables
+the placeholder text to appear as regular characters and not a string of dots.
 
 ## Building yourself
 
