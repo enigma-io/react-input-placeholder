@@ -24,13 +24,16 @@ function createShimmedElement(React, elementConstructor, name) {
     _needsPlaceholding: function(placeholder) {
       if (!placeholder) { return false; }
 
-      // LEXI: temporarily commenting this out because it's breaking newlines in textareas
       // need to manually apply placeholders with newlines in textarea
-      // if (name === 'Textarea' && placeholder.indexOf('\n') !== -1) {
-      //   return true;
-      // }
+      if (!this._isChrome() && name === 'Textarea' && placeholder.indexOf('\n') !== -1) {
+        return true;
+      }
 
       return !isPlaceholderSupported;
+    },
+
+    _isChrome: function() {
+      return !!window.chrome && !!window.chrome.webstore;
     },
 
     // this component supports valueLink or value/onChange.
