@@ -65,6 +65,13 @@ function createShimmedElement(React, elementConstructor, name) {
       if (this.props.onBlur) { return this.props.onBlur(e); }
     },
 
+    // this event handler prevents user from selecting placeholder text while
+    // ensuring the input gets focus
+    onMouseDownWhilePlaceholding: function(e) {
+      e.preventDefault();
+      e.target.focus();
+    },
+
     setSelectionIfNeeded: function(node) {
       // if placeholder is visible, ensure cursor is at start of input
       if (this.needsPlaceholding && this.hasFocus && this.isPlaceholding &&
@@ -120,6 +127,8 @@ function createShimmedElement(React, elementConstructor, name) {
             props.type = 'text';
           }
           props.className += ' placeholder';
+
+          props.onMouseDown = this.onMouseDownWhilePlaceholding;
 
           if (this.props.placeholderStyle) {
             if (props.styles) {
