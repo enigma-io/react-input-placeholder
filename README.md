@@ -15,6 +15,10 @@ Require:
 ```js
 Input = require('react-input-placeholder')(React).Input;
 Textarea = require('react-input-placeholder')(React).Textarea;
+
+// React >= 14.0.0
+Input = require('react-input-placeholder')(React, ReactDom).Input;
+Textarea = require('react-input-placeholder')(React, ReactDom).Textarea;
 ```
 
 ### No module
