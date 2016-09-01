@@ -1,3 +1,5 @@
+var React = require('react');
+var ReactDOM = require('react-dom');
 var assign = require('lodash.assign');
 
 var isPlaceholderSupported = 'placeholder' in document.createElement('input');
@@ -6,7 +8,7 @@ var isPlaceholderSupported = 'placeholder' in document.createElement('input');
  * Input is a wrapper around React.DOM.input with a `placeholder` shim for IE9.
  * NOTE: only supports "controlled" inputs (http://facebook.github.io/react/docs/forms.html#controlled-components)
  */
-function createShimmedElement(React, elementConstructor, name) {
+function createShimmedElement(elementConstructor, name) {
   return React.createClass({
     displayName: name,
 
@@ -105,7 +107,7 @@ function createShimmedElement(React, elementConstructor, name) {
     },
 
     componentDidUpdate: function() {
-      this.setSelectionIfNeeded(this.getDOMNode());
+      this.setSelectionIfNeeded(ReactDOM.findDOMNode(this));
     },
 
     render: function() {
@@ -131,14 +133,7 @@ function createShimmedElement(React, elementConstructor, name) {
           props.onMouseDown = this.onMouseDownWhilePlaceholding;
 
           if (this.props.placeholderStyle) {
-            if (props.styles) {
-              // account for react-styles clobbering style prop
-              var styles = props.styles.slice();
-              styles.push(this.props.placeholderStyle);
-              props.styles = styles;
-            } else {
-              props.style = assign({}, this.props.style, this.props.placeholderStyle);
-            }
+            props.style = assign({}, this.props.style, this.props.placeholderStyle);
           }
         } else {
           this.isPlaceholding = false;
@@ -152,9 +147,7 @@ function createShimmedElement(React, elementConstructor, name) {
   });
 }
 
-module.exports = function(React) {
-  return {
-    Input: createShimmedElement(React, 'input', 'Input'),
-    Textarea: createShimmedElement(React, 'textarea', 'Textarea')
-  };
+module.exports = {
+  Input: createShimmedElement('input', 'Input'),
+  Textarea: createShimmedElement('textarea', 'Textarea')
 };
