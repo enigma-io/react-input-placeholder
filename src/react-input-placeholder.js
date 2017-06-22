@@ -9,21 +9,22 @@ var isPlaceholderSupported = 'placeholder' in document.createElement('input');
  * NOTE: only supports "controlled" inputs (http://facebook.github.io/react/docs/forms.html#controlled-components)
  */
 function createShimmedElement(elementConstructor, name) {
-  return React.createClass({
-    displayName: name,
+  return class extends React.Component {
+    static displayName = name;
 
-    propTypes: {
+    static propTypes = {
       placeholderStyle: React.PropTypes.object
-    },
+    };
 
-    componentWillMount: function() {
+    componentWillMount() {
       this.needsPlaceholding = this._needsPlaceholding(this.props.placeholder);
-    },
-    componentWillReceiveProps: function(props) {
-      this.needsPlaceholding = this._needsPlaceholding(props.placeholder);
-    },
+    }
 
-    _needsPlaceholding: function(placeholder) {
+    componentWillReceiveProps(props) {
+      this.needsPlaceholding = this._needsPlaceholding(props.placeholder);
+    }
+
+    _needsPlaceholding = (placeholder) => {
       if (!placeholder) { return false; }
 
       // need to manually apply placeholders with newlines in textarea
@@ -32,49 +33,52 @@ function createShimmedElement(elementConstructor, name) {
       }
 
       return !isPlaceholderSupported;
-    },
+    };
 
-    _isChrome: function() {
+    _isChrome = () => {
       return !!window.chrome && !!window.chrome.webstore;
-    },
+    };
 
     // this component supports valueLink or value/onChange.
     // borrowed from LinkedValueMixin.js
-    getValue: function() {
+    getValue = () => {
       if (this.props.valueLink) {
         return this.props.valueLink.value;
       }
       return this.props.value;
-    },
-    getOnChange: function() {
+    };
+
+    getOnChange = () => {
       if (this.props.valueLink) {
         return this._handleLinkedValueChange;
       }
       return this.props.onChange;
-    },
-    _handleLinkedValueChange: function(e) {
+    };
+
+    _handleLinkedValueChange = (e) => {
       this.props.valueLink.requestChange(e.target.value);
-    },
+    };
 
     // keep track of focus
-    onFocus: function(e) {
+    onFocus = (e) => {
       this.hasFocus = true;
       this.setSelectionIfNeeded(e.target);
       if (this.props.onFocus) { return this.props.onFocus(e); }
-    },
-    onBlur: function(e) {
+    };
+
+    onBlur = (e) => {
       this.hasFocus = false;
       if (this.props.onBlur) { return this.props.onBlur(e); }
-    },
+    };
 
     // this event handler prevents user from selecting placeholder text while
     // ensuring the input gets focus
-    onMouseDownWhilePlaceholding: function(e) {
+    onMouseDownWhilePlaceholding = (e) => {
       e.preventDefault();
       e.target.focus();
-    },
+    };
 
-    setSelectionIfNeeded: function(node) {
+    setSelectionIfNeeded = (node) => {
       // if placeholder is visible, ensure cursor is at start of input
       if (this.needsPlaceholding && this.hasFocus && this.isPlaceholding &&
           (node.selectionStart !== 0 || node.selectionEnd !== 0)) {
@@ -82,9 +86,9 @@ function createShimmedElement(elementConstructor, name) {
         return true;
       }
       return false;
-    },
+    };
 
-    onChange: function(e) {
+    onChange = (e) => {
       if (this.isPlaceholding) {
         // remove placeholder when text is added
         var value = e.target.value,
@@ -95,22 +99,22 @@ function createShimmedElement(elementConstructor, name) {
       }
       var onChange = this.getOnChange();
       if (onChange) { return onChange(e); }
-    },
+    };
 
-    onSelect: function(e) {
+    onSelect = (e) => {
       if (this.isPlaceholding) {
         this.setSelectionIfNeeded(e.target);
         return false;
       } else if (this.props.onSelect) {
         return this.props.onSelect(e);
       }
-    },
+    };
 
-    componentDidUpdate: function() {
+    componentDidUpdate() {
       this.setSelectionIfNeeded(ReactDOM.findDOMNode(this));
-    },
+    }
 
-    render: function() {
+    render() {
       var props = assign({}, this.props);
 
       if (this.needsPlaceholding) {
@@ -144,7 +148,7 @@ function createShimmedElement(elementConstructor, name) {
       var element = React.createElement(elementConstructor, props, this.props.children);
       return element;
     }
-  });
+  };
 }
 
 module.exports = {
