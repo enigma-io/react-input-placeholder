@@ -1,6 +1,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var assign = require('lodash.assign');
+var omit = require('lodash.omit');
 
 var isPlaceholderSupported = 'placeholder' in document.createElement('input');
 
@@ -115,7 +116,7 @@ function createShimmedElement(elementConstructor, name) {
     }
 
     render() {
-      var props = assign({}, this.props);
+      var props = assign({}, omit(this.props, ['placeholderStyle']));
 
       if (this.needsPlaceholding) {
         // override valueLink and event handlers
